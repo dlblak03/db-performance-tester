@@ -1,27 +1,36 @@
 
 class db_connection:
-    pass
+    def __init__(self):
+        self.connection = None
+        self.configuration = {}
+        self.configured = False
+
+    def set_configuration(self):
+        print(f"{'Configure database connection:':50}\n")
+
+        print("Pick a database type:\n")
+        print("1. PostgreSQL\n")
+        type = input("(1): ").strip()
+
+        self.configured = True
+
+    def get_connection(self):
+        if not self.configured:
+            self.set_configuration()
+        
+        return None
+    
+    def test_connection(self):
+        return False
 
 class db_performance_tester:
     def __init__(self):
         pass
 
-    def query_concurrency_test(self, query, concurrent_users=10, duration=60):
+    def query_concurrency_test(self, query, concurrent_users=10):
         pass
 
-    def procedure_concurrency_test(self, procedure, concurrent_users=10, duration=60):
-        pass
-
-    def query_stress_test(self, query_list, max_connections=500):
-        pass
-
-    def procedure_stress_test(self, procedure_list, max_connections=500):
-        pass
-
-    def query_endurance_test(self, query, users=50, duration=3600):
-        pass
-
-    def procedure_endurance_test(self, procedure, users=50, duration=3600):
+    def procedure_concurrency_test(self, procedure, concurrent_users=10):
         pass
 
 def main():
@@ -30,9 +39,9 @@ def main():
 
     while True:
         menu.header()
-        menu.connectionStatus(False)
+        menu.connectionStatus(database)
 
-        choice = input("What would you like to do?").strip()
+        connection = database.get_connection()
 
 if __name__ == '__main__':
     try:
@@ -42,6 +51,7 @@ if __name__ == '__main__':
         print('\npsycopg2 not found. Install with: pip install psycopg2-binary\n')
         exit(1)
     
+    import os
     import menu
 
     print('\nAll libraries found. Let\'s begin!\n')
