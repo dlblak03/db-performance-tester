@@ -1,10 +1,9 @@
 
-
-import psycopg2
-from psycopg2 import sql
+class db_connection:
+    pass
 
 class db_performance_tester:
-    def __init__(self, host, database, user, password, port, type='postgresql'):
+    def __init__(self):
         pass
 
     def query_concurrency_test(self, query, concurrent_users=10, duration=60):
@@ -26,7 +25,29 @@ class db_performance_tester:
         pass
 
 def main():
-    pt = db_performance_tester()
+    database = db_connection()
+    tester = db_performance_tester()
+
+    while True:
+        menu.header()
+        menu.connectionStatus(False)
+
+        choice = input("What would you like to do?").strip()
 
 if __name__ == '__main__':
-    main()
+    try:
+        import psycopg2
+        from psycopg2 import sql
+    except ImportError:
+        print('\npsycopg2 not found. Install with: pip install psycopg2-binary\n')
+        exit(1)
+    
+    import menu
+
+    print('\nAll libraries found. Let\'s begin!\n')
+
+    try:
+        main()
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        exit(1)
