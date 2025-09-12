@@ -6,16 +6,38 @@ class db_connection:
         self.configured = False
 
     def set_configuration(self):
-        print(f"{'Configure database connection:':50}\n")
+        for step in ['type','host','port','database','username','password']:
+            menu.header()
+            menu.connection_parameters(self)
+            menu.connection_status(self)
 
-        print("Pick a database type:\n")
-        print("1. PostgreSQL\n")
-        type = input("(1): ").strip()
+            match step:
+                case 'type':
+                    menu.set_type(self)
+                case 'host':
+                    menu.set_host(self)
+                case 'port':
+                    menu.set_port(self)
+                case 'database':
+                    menu.set_database(self)
+                case 'username':
+                    menu.set_username(self)
+                case 'password':
+                    menu.set_password(self)
+            
+            if os.name == 'nt':  # Windows
+                os.system('cls')
+            else:  # Unix/Linux/MacOS
+                os.system('clear')
+
+        menu.header()
+        menu.connection_parameters(self)
+        menu.connection_status(self)
 
         self.configured = True
 
     def get_connection(self):
-        if not self.configured:
+        while not self.configured:
             self.set_configuration()
         
         return None
@@ -38,9 +60,6 @@ def main():
     tester = db_performance_tester()
 
     while True:
-        menu.header()
-        menu.connectionStatus(database)
-
         connection = database.get_connection()
 
 if __name__ == '__main__':
