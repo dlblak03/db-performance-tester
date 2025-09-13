@@ -6,7 +6,7 @@ class db_connection:
         self.configured = False
 
     def set_configuration(self):
-        for step in ['type','host','port','database','username','password']:
+        for step in ['type','host','port','database','username','password', 'confirm']: 
             menu.header()
             menu.connection_parameters(self)
             menu.connection_status(self)
@@ -24,30 +24,58 @@ class db_connection:
                     menu.set_username(self)
                 case 'password':
                     menu.set_password(self)
+                case 'confirm':
+                    menu.confirm_configuration(self)
             
             if os.name == 'nt':  # Windows
                 os.system('cls')
             else:  # Unix/Linux/MacOS
                 os.system('clear')
 
-        menu.header()
-        menu.connection_parameters(self)
-        menu.connection_status(self)
-
         self.configured = True
 
-    def get_connection(self):
+    def set_connection(self):
         while not self.configured:
             self.set_configuration()
+
+        if self.configuration['type'] == 'PostgreSQL':
+            try:
+                connection = psycopg2.connect(
+                    host=self.configuration['host'],
+                    port=self.configuration['port'],
+                    database=self.configuration['database'],
+                    user=self.configuration['username'],
+                    password=self.configuration['password']
+                )
+
+                self.connection = connection
+            except:
+                self.configured = False
+                print('A connection could not be established. Please try again.\n')
+
         
-        return None
-    
     def test_connection(self):
-        return False
+        if self.configuration.get('type', '') == 'PostgreSQL':
+            try:
+                cursor = self.connection.cursor()
+                cursor.execute("SELECT version();")
+                version = cursor.fetchone()
+                cursor.close()
+                return True
+            except:
+                return False
 
 class db_performance_tester:
     def __init__(self):
-        pass
+        self.database = None
+
+    def start(self, database):
+        self.database = database
+
+        while True:
+            menu.header()
+            menu.connection_parameters(self.database)
+            menu.connection_status(self.database)
 
     def query_concurrency_test(self, query, concurrent_users=10):
         pass
@@ -59,8 +87,10 @@ def main():
     database = db_connection()
     tester = db_performance_tester()
 
-    while True:
-        connection = database.get_connection()
+    while not database.configured:
+        database.set_connection()
+        
+    tester.start(database)
 
 if __name__ == '__main__':
     try:
