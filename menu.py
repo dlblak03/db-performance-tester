@@ -8,6 +8,8 @@ def header():
 
 def connection_parameters(db_connection):
     print(f"{'| Type:'[:10]:<10}{(db_connection.configuration.get('type', '<type>') + ' |')[:40]:>40}")
+    print(f"{'| Min Connections:'[:10]:<10}{(db_connection.configuration.get('min_connections', '<2>') + ' |')[:40]:>40}")
+    print(f"{'| Max Connections:'[:10]:<10}{(db_connection.configuration.get('max_connections', '<10>') + ' |')[:40]:>40}")
     print(f"{'| Host:'[:10]:<10}{(db_connection.configuration.get('host', '<host>') + ' |')[:40]:>40}")
     print(f"{'| Port:'[:10]:<10}{(db_connection.configuration.get('port', '<port>') + ' |')[:40]:>40}")
     print(f"{'| Database:'[:10]:<10}{(db_connection.configuration.get('database', '<database>') + ' |')[:40]:>40}")
@@ -31,6 +33,24 @@ def set_type(db_connection):
 
         if type == '1':
             db_connection.configuration['type'] = 'PostgreSQL'
+            break
+        else:
+            print('\nInvalid option. Please try again.\n')
+
+def set_min_connections(db_connection):
+    while True:
+        min = input("\nEnter the min connections for connection pool: ").strip()
+        if min.isdigit():
+            db_connection.configuration['min_connections'] = min
+            break
+        else:
+            print('\nInvalid option. Please try again.\n')
+
+def set_max_connections(db_connection):
+    while True:
+        max = input("\nEnter the max connections for connection pool: ").strip()
+        if max.isdigit():
+            db_connection.configuration['max_connections'] = max
             break
         else:
             print('\nInvalid option. Please try again.\n')
@@ -84,15 +104,18 @@ def confirm_configuration(db_connection):
         connection_status(db_connection)
 
         print("\nConfirm the configuration:\n")
+        
         print("1. Edit Type")
-        print("2. Edit Host")
-        print("3. Edit Port")
-        print("4. Edit Database")
-        print("5. Edit Username")
-        print("6. Edit password")
-        print("7. Confirm configuration")
+        print("2. Edit Min Connections")
+        print("3. Edit Max Connections")
+        print("4. Edit Host")
+        print("5. Edit Port")
+        print("6. Edit Database")
+        print("7. Edit Username")
+        print("8. Edit password")
+        print("9. Confirm configuration")
 
-        option = input("\n(1-7): ").strip()
+        option = input("\n(1-9): ").strip()
 
         if os.name == 'nt':  # Windows
             os.system('cls')
@@ -107,14 +130,18 @@ def confirm_configuration(db_connection):
             case '1':
                 set_type(db_connection)
             case '2':
-                set_host(db_connection)
+                set_min_connections(db_connection)
             case '3':
-                set_port(db_connection)
+                set_max_connections(db_connection)
             case '4':
-                set_database(db_connection)
+                set_host(db_connection)
             case '5':
-                set_username(db_connection)
+                set_port(db_connection)
             case '6':
-                set_password(db_connection)
+                set_database(db_connection)
             case '7':
+                set_username(db_connection)
+            case '8':
+                set_password(db_connection)
+            case '9':
                 break
